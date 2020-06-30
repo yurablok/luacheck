@@ -811,6 +811,25 @@ statements["local"] = function(state)
       lhs[#lhs + 1] = parse_id(state)
    until not test_and_skip_token(state, ",")
 
+   if test_and_skip_token(state, "<") then
+      if state.token == "const" then
+         -- Skip "const"
+         skip_token(state)
+      elseif state.token == "close" then
+         -- Skip "close"
+         skip_token(state)
+      else
+         parse_error(state, "expected attributes 'const' or 'close'")
+         -- No return values.
+         return new_outer_node(start_range, "Return")
+      end
+      if not test_and_skip_token(state, ">") then
+         parse_error(state, "expected '>'")
+         -- No return values.
+         return new_outer_node(start_range, "Return")
+      end
+   end
+
    if test_and_skip_token(state, "=") then
       rhs = parse_expression_list(state)
    end

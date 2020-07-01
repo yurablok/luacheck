@@ -1,12 +1,16 @@
-local argparse = require "argparse"
+local argparse = require "argparse" -- Checked with argparse 0.6.0
 local cache = require "luacheck.cache"
 local config = require "luacheck.config"
-local luacheck = require "luacheck"
+local luacheck = require "luacheck.init"
 local multithreading = require "luacheck.multithreading"
 local profiler = require "luacheck.profiler"
 local runner = require "luacheck.runner"
 local utils = require "luacheck.utils"
 local version = require "luacheck.version"
+
+local args = { ... }
+-- You can use your own result handler here or from C-side
+checkprint = print
 
 local exit_codes = {
    ok = 0,
@@ -17,7 +21,8 @@ local exit_codes = {
 }
 
 local function critical(msg)
-   io.stderr:write("Critical error: "..msg.."\n")
+   --io.stderr:write("Critical error: "..msg.."\n")
+   checkprint("Critical error: "..msg)
    os.exit(exit_codes.critical)
 end
 
@@ -257,9 +262,10 @@ end
 
 local function main()
    local parser = get_parser()
-   local ok, args = parser:pparse()
+   local ok, args = parser:pparse(args)
    if not ok then
-      io.stderr:write(("%s\n\nError: %s\n"):format(parser:get_usage(), args))
+      --io.stderr:write(("%s\n\nError: %s\n"):format(parser:get_usage(), args))
+      checkprint(("%s\nError: %s"):format(parser:get_usage(), args))
       os.exit(exit_codes.critical)
    end
 
@@ -280,7 +286,8 @@ local function main()
 
    if not checker then
       if is_invalid_args_error then
-         io.stderr:write(("%s\n\nError: %s\n"):format(parser:get_usage(), err))
+         --io.stderr:write(("%s\n\nError: %s\n"):format(parser:get_usage(), err))
+         checkprint(("%s\nError: %s"):format(parser:get_usage(), err))
          os.exit(exit_codes.critical)
       else
          critical(err)
@@ -321,7 +328,8 @@ local function main()
       critical(format_err)
    end
 
-   io.stdout:write(output)
+   --io.stdout:write(output)
+   checkprint(output)
 
    if args.profile then
       profiler.report()
@@ -338,16 +346,17 @@ local function main()
    end
 end
 
-local _, error_wrapper = utils.try(main)
-local err = error_wrapper.err
-local traceback = error_wrapper.traceback
-
-if utils.is_instance(err, utils.InvalidPatternError) then
-   critical(("Invalid pattern '%s'"):format(err.pattern))
-elseif type(err) == "string" and err:find("interrupted!$") then
-   critical("Interrupted")
-else
-   local msg = ("Luacheck %s bug (please report at https://github.com/mpeterv/luacheck/issues):\n%s\n%s"):format(
-      luacheck._VERSION, err, traceback)
-   critical(msg)
-end
+--local _, error_wrapper = utils.try(main)
+--local err = error_wrapper.err
+--local traceback = error_wrapper.traceback
+--
+--if utils.is_instance(err, utils.InvalidPatternError) then
+--   critical(("Invalid pattern '%s'"):format(err.pattern))
+--elseif type(err) == "string" and err:find("interrupted!$") then
+--   critical("Interrupted")
+--else
+--   local msg = ("Luacheck %s bug (please report at https://github.com/mpeterv/luacheck/issues):\n%s\n%s"):format(
+--      luacheck._VERSION, err, traceback)
+--   critical(msg)
+--end
+main()

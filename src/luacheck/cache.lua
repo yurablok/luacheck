@@ -1,6 +1,6 @@
 local fs = require "luacheck.fs"
 local serializer = require "luacheck.serializer"
-local sha1 = require "luacheck.vendor.sha1"
+local sha1 = require "luacheck.vendor.sha1.init"
 local utils = require "luacheck.utils"
 
 local cache = {}

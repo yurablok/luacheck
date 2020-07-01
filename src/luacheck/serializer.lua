@@ -1,5 +1,5 @@
 local parse_inline_options = require "luacheck.stages.parse_inline_options"
-local stages = require "luacheck.stages"
+local stages = require "luacheck.stages.init"
 local utils = require "luacheck.utils"
 
 local serializer = {}

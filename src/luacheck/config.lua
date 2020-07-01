@@ -1,6 +1,6 @@
 local cache = require "luacheck.cache"
 local options = require "luacheck.options"
-local builtin_standards = require "luacheck.builtin_standards"
+local builtin_standards = require "luacheck.builtin_standards.init"
 local fs = require "luacheck.fs"
 local globbing = require "luacheck.globbing"
 local standards = require "luacheck.standards"

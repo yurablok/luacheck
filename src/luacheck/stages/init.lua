@@ -30,8 +30,14 @@ stages.names = {
 
 stages.modules = {}
 
-for _, name in ipairs(stages.names) do
-   table.insert(stages.modules, require("luacheck.stages." .. name))
+-- Fix of strange bug (maybe related to Lua 5.4?):
+-- "init.lua:36: bad argument #2 to 'insert' (number expected, got table)"
+--for _, name in ipairs(stages.names) do
+--   table.insert(stages.modules, require("luacheck.stages." .. name))
+--end
+for i, name in ipairs(stages.names) do
+   require("luacheck.stages." .. name)
+   table.insert(stages.modules, i, require("luacheck.stages." .. name))
 end
 
 stages.warnings = {}
